@@ -39,6 +39,10 @@ export function getMalloyLenses(document: TextDocument): CodeLens[] {
   const lenses: CodeLens[] = [];
   const symbols = Malloy.parse({ source: document.getText() }).symbols;
 
+
+  console.log("!!!!!")
+  console.log(JSON.stringify(symbols))
+
   let currentUnnamedQueryIndex = 0;
   let currentUnnamedSQLBlockIndex = 0;
   symbols.forEach((symbol) => {
@@ -46,7 +50,7 @@ export function getMalloyLenses(document: TextDocument): CodeLens[] {
       lenses.push({
         range: symbol.range.toJSON(),
         command: {
-          title: "Run",
+          title: "RunA",
           command: "malloy.runNamedQuery",
           arguments: [symbol.name],
         },
@@ -55,7 +59,7 @@ export function getMalloyLenses(document: TextDocument): CodeLens[] {
       lenses.push({
         range: symbol.range.toJSON(),
         command: {
-          title: "Run",
+          title: "RunB",
           command: "malloy.runQueryFile",
           arguments: [currentUnnamedQueryIndex],
         },
@@ -63,6 +67,8 @@ export function getMalloyLenses(document: TextDocument): CodeLens[] {
       currentUnnamedQueryIndex++;
     } else if (symbol.type === "explore") {
       const children = symbol.children;
+      console.log("????")
+      console.log(JSON.stringify(children))
       const exploreName = symbol.name;
       lenses.push({
         range: symbol.range.toJSON(),
@@ -100,7 +106,7 @@ export function getMalloyLenses(document: TextDocument): CodeLens[] {
           lenses.push({
             range: child.range.toJSON(),
             command: {
-              title: "Run",
+              title: "RunC",
               command: "malloy.runQuery",
               arguments: [
                 `query: ${exploreName}->${queryName}`,
@@ -114,7 +120,7 @@ export function getMalloyLenses(document: TextDocument): CodeLens[] {
       lenses.push({
         range: symbol.range.toJSON(),
         command: {
-          title: "Run",
+          title: "RunD",
           command: "malloy.runNamedSQLBlock",
           arguments: [symbol.name],
         },
@@ -129,7 +135,7 @@ export function getMalloyLenses(document: TextDocument): CodeLens[] {
       lenses.push({
         range: symbol.range.toJSON(),
         command: {
-          title: "Run",
+          title: "RunE",
           command: "malloy.runUnnamedSQLBlock",
           arguments: [currentUnnamedSQLBlockIndex],
         },
