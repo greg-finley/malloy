@@ -2204,6 +2204,10 @@ export class QueryMaterializer extends FluentState<PreparedQuery> {
   async run(options?: { rowLimit?: number }): Promise<Result> {
     const connections = this.runtime.connections;
     const preparedResult = await this.getPreparedResult();
+    console.log(connections);
+    console.log(preparedResult);
+    console.log(options);
+    throw 'Greg';
     return Malloy.run({ connections, preparedResult, options });
   }
 
