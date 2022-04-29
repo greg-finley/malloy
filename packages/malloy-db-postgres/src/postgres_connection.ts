@@ -66,6 +66,7 @@ interface PostgresConnectionConfiguration {
   username?: string;
   password?: string;
   databaseName?: string;
+  defaultSchema?: string;
 }
 
 type PostgresConnectionConfigurationReader =
@@ -312,10 +313,17 @@ export class PostgresConnection implements Connection {
       fields: [],
     };
 
-    const { tablePath: tableName } = parseTableURL(tableURL);
-    const [schema, table] = tableName.split(".");
+    const { tablePath } = parseTableURL(tableURL);
+    // Refactor to see the length of the split and then decide how to parse
+    let [schema, table] = tablePath.split(".");
     if (table === undefined) {
-      throw new Error("Default schema not supported Yet in Postgres");
+      const config = await this.readConfig();
+      console.log(config);
+      if (config.defaultSchema) {
+        [table, schema] = [schema, config.defaultSchema];
+      } else {
+        throw new Error("Default schema not provided for Postgres");
+      }
     }
     const infoQuery = `
       SELECT column_name, c.data_type, e.data_type as element_type
@@ -325,6 +333,7 @@ export class PostgresConnection implements Connection {
         WHERE table_name = '${table}'
           AND table_schema = '${schema}'
     `;
+    console.log(infoQuery);
 
     await this.schemaFromQuery(infoQuery, structDef);
     return structDef;
