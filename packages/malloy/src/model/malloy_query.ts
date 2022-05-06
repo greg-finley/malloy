@@ -644,6 +644,8 @@ class QueryFieldTimestamp extends QueryAtomicField {
     if (!fd.timeframe) {
       return super.generateExpression(resultSet);
     } else {
+      console.log("query field timestamp");
+      console.trace();
       const truncated = this.parent.dialect.sqlTrunc(
         { value: this.getExpr(), valueType: "timestamp" },
         fd.timeframe
